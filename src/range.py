@@ -34,7 +34,7 @@ import netifaces
 # print(netifaces.ifaddresses('wlp1s0')[netifaces.AF_INET][0]['addr'])
 hostname = None
 try:
-    hostname = socket.gethostbyaddr('192.168.0.105')[0]
+    hostname = socket.gethostbyaddr('192.168.0.108')[0]
     if hostname:
         print(hostname)
     else:

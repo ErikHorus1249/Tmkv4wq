@@ -16,12 +16,11 @@ def Arp(ip,interface):
         arp_r = ARP(pdst=ip) # ARP requet 
         br = Ether(dst='ff:ff:ff:ff:ff:ff')
         request = br/arp_r # creat ARP request
-        answered, unanswered=srp(Ether(dst="FF:FF:FF:FF:FF:FF")/ARP(pdst=ip),timeout=2,iface=interface,inter=0.1)
+        answered, unanswered = srp(Ether(dst="FF:FF:FF:FF:FF:FF")/ARP(pdst=ip),timeout=2,iface=interface,inter=0.1)
         for i in answered:
             ip, mac = i[1].psrc, i[1].hwsrc
-            hostname = getHostName(ip)
-            print('\033[36m' + ip + '\t\t' + mac)
-            result.append({'IP':ip,'MAC':mac})
+            print(ip + '\t\t' + mac)
+            result.append({'IP':ip,'MAC':mac,'PORTS':portScan(ip)})
         return result
 
 # PORT scanning   
@@ -55,12 +54,11 @@ def getIpRange():
     INTER = getDefaultInterface()
     NETMASK = str(netifaces.ifaddresses(INTER)[netifaces.AF_INET][0]['netmask'])
     IP = str(netifaces.ifaddresses(INTER)[netifaces.AF_INET][0]['addr'])
-    return ipaddress.ip_network(IP+'/'+NETMASK, strict=False)
+    return str(ipaddress.ip_network(IP+'/'+NETMASK, strict=False))
     
 # get host name
 def getHostName(ip):
     return socket.gethostbyaddr('192.168.0.106')[0]
 
-print(getIpRange())
-print(Arp(str(getIpRange()), getDefaultInterface())) # call the method
+print(Arp(getIpRange(), getDefaultInterface())) # call the method
 
