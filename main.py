@@ -16,21 +16,18 @@ def Arp(ip,interface):
         arp_r = ARP(pdst=ip) # ARP requet 
         br = Ether(dst='ff:ff:ff:ff:ff:ff')
         request = br/arp_r # creat ARP request
-        answered, unanswered=srp(Ether(dst="FF:FF:FF:FF:FF:FF")/ARP(pdst=ip),timeout=1,iface=interface,inter=0.1)
+        answered, unanswered=srp(Ether(dst="FF:FF:FF:FF:FF:FF")/ARP(pdst=ip),timeout=2,iface=interface,inter=0.1)
         for i in answered:
             ip, mac = i[1].psrc, i[1].hwsrc
-#            ports = portScan(ip) #get port
-            # display
+            hostname = getHostName(ip)
             print('\033[36m' + ip + '\t\t' + mac)
-            # print('-' * 37)
             result.append({'IP':ip,'MAC':mac})
         return result
-     
+
+# PORT scanning   
 def portScan(ip): 
-    # port result of scanning 
-    result = []
-    # instantiate nmap.PortScanner object
-    try:
+    result = []# port result of scanning 
+    try:# instantiate nmap.PortScanner object
         nm = nmap.PortScanner()         
     except nmap.PortScannerError:
         print('Nmap not found', sys.exc_info()[0])
@@ -48,19 +45,21 @@ def portScan(ip):
                 result.append(port)
     return result
 
+# get network interface default
 def getDefaultInterface():
     gws=netifaces.gateways()
     return gws['default'][netifaces.AF_INET][1]
 
-def getLocalIPv4():
-    ip = netifaces.ifaddresses('wlp1s0')[netifaces.AF_INET][0]['addr']
-    return ip
-
+# get ip range
 def getIpRange():
     INTER = getDefaultInterface()
     NETMASK = str(netifaces.ifaddresses(INTER)[netifaces.AF_INET][0]['netmask'])
     IP = str(netifaces.ifaddresses(INTER)[netifaces.AF_INET][0]['addr'])
     return ipaddress.ip_network(IP+'/'+NETMASK, strict=False)
+    
+# get host name
+def getHostName(ip):
+    return socket.gethostbyaddr('192.168.0.106')[0]
 
 print(getIpRange())
 print(Arp(str(getIpRange()), getDefaultInterface())) # call the method
