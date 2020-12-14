@@ -1,6 +1,6 @@
 import scapy.all as scapy
 import sys
-import nmap # import nmap.py module
+import nmap
 
 # IP + MAC
 def Arp(ip):
