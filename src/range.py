@@ -30,5 +30,14 @@ import netifaces
 #         break
 # mask = line.rstrip().split(b':')[-1].replace(b' ',b'').decode()
 # print(mask)
-print(netifaces.ifaddresses('wlp1s0')[netifaces.AF_INET][0]['netmask'])
-print(netifaces.ifaddresses('wlp1s0')[netifaces.AF_INET][0]['addr'])
+# print(netifaces.ifaddresses('wlp1s0')[netifaces.AF_INET][0]['netmask'])
+# print(netifaces.ifaddresses('wlp1s0')[netifaces.AF_INET][0]['addr'])
+hostname = None
+try:
+    hostname = socket.gethostbyaddr('192.168.0.105')[0]
+    if hostname:
+        print(hostname)
+    else:
+        print('no')
+except socket.herror:
+    print('loi')
