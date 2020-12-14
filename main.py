@@ -6,6 +6,8 @@ import socket
 import fcntl
 import struct
 import re
+import netifaces
+import ipaddress
 
 # IP + MAC
 def Arp(ip,interface):
@@ -23,9 +25,7 @@ def Arp(ip,interface):
             # print('-' * 37)
             result.append({'IP':ip,'MAC':mac})
         return result
-
-
-# PORTS        
+     
 def portScan(ip): 
     # port result of scanning 
     result = []
@@ -53,21 +53,15 @@ def getDefaultInterface():
     return gws['default'][netifaces.AF_INET][1]
 
 def getLocalIPv4():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 80))
-    # print(s.getsockname()[0])
-    ip = s.getsockname()[0]
-    s.close()
+    ip = netifaces.ifaddresses('wlp1s0')[netifaces.AF_INET][0]['addr']
     return ip
 
-def getIpRange(ip):
-    tail = ".0/24"
-    match = re.search(r'192.168.[0123456789]+', ip)
-    if match: #nếu tồn tại chuỗi khớp                     
-        return match.group()+tail
-    else:
-        print ('no match!')
+def getIpRange():
+    INTER = getDefaultInterface()
+    NETMASK = str(netifaces.ifaddresses(INTER)[netifaces.AF_INET][0]['netmask'])
+    IP = str(netifaces.ifaddresses(INTER)[netifaces.AF_INET][0]['addr'])
+    return ipaddress.ip_network(IP+'/'+NETMASK, strict=False)
 
-
-print(Arp(getIpRange(getLocalIPv4()), getDefaultInterface())) # call the method
+print(getIpRange())
+print(Arp(str(getIpRange()), getDefaultInterface())) # call the method
 
