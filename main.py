@@ -82,20 +82,5 @@ if __name__ == "__main__":
     start_time = time.time()
     ip_range = str(getIpRange())
     print(Arp(ip_range, getDefaultInterface()))
-    # print(Arp('192.168.1.104', getDefaultInterface()))
     print("\n--->  time execution %s s" % round(time.time() - start_time,2))
 
-# def Total(ip,interface):
-#         result = []
-#         print("IP range : "+ip + "\t" + "interface : "+interface)
-#         arp_r = ARP(pdst=ip) # ARP requet 
-#         br = Ether(dst='ff:ff:ff:ff:ff:ff')
-#         request = br/arp_r # creat ARP request
-#         answered, unanswered = srp(Ether(dst="FF:FF:FF:FF:FF:FF")/ARP(pdst=ip),timeout=2,iface=interface,inter=0.1)
-#         for i in unanswered:
-#             print("Unanswer : "+ip)
-#         for i in answered:
-#             ip, mac = i[1].psrc, i[1].hwsrc
-#             print(ip + '\t\t' + mac)
-#             result.append({'IP':ip,'MAC':mac,'PORTS':portScan(ip)})
-#         return result
