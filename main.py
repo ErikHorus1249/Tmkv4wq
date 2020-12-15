@@ -12,13 +12,17 @@ import time
 
 # IP + MAC
 def Arp(ip,interface):
+        count = 0
         result = []
+        # time to wait for an answer
+        time_out = 3
         print("IP range : "+ip + "\t" + "interface : "+interface)
         arp_r = ARP(pdst=ip) # ARP requet 
         br = Ether(dst='ff:ff:ff:ff:ff:ff')
         request = br/arp_r # creat ARP request
-        answered, unanswered = srp(Ether(dst="FF:FF:FF:FF:FF:FF")/ARP(pdst=ip),timeout=5,iface=interface,inter=0.1)
+        answered, unanswered = srp(Ether(dst="FF:FF:FF:FF:FF:FF")/ARP(pdst=ip),timeout=time_out,iface=interface,inter=0.1)
         for i in answered:
+            count += 1
             ip, mac = i[1].psrc, i[1].hwsrc
             host_name = getHost(ip)
             if host_name:
@@ -27,13 +31,16 @@ def Arp(ip,interface):
             else :
                 print(ip + '\t\t' + mac)
                 result.append({'IP':ip,'MAC':mac})
+        print("Devices : "+str(count))
         return result
 
 
 # PORT scanning   
 def portScan(ip): 
-    result = []# port result of scanning 
-    try:# instantiate nmap.PortScanner object
+    # port result of scanning 
+    result = []
+    # instantiate nmap.PortScanner object
+    try:
         nm = nmap.PortScanner()         
     except nmap.PortScannerError:
         print('Nmap not found', sys.exc_info()[0])
@@ -41,8 +48,10 @@ def portScan(ip):
     except:
         print("Unexpected error:", sys.exc_info()[0])
         sys.exit(0)
-    nm.scan(ip, '22-443')      # scan host, ports from 22 to 443 (limit)
-    nm.all_hosts()                      # get all hosts that were scanned
+    # scan host, ports from 22 to 443 (limit)
+    nm.scan(ip, '22-443')   
+    # get all hosts that were scanned   
+    nm.all_hosts()                      
     for host in nm.all_hosts():
         for proto in nm[host].all_protocols():
             lport = nm[host][proto].keys()
