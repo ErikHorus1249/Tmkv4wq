@@ -31,13 +31,23 @@ import netifaces
 # mask = line.rstrip().split(b':')[-1].replace(b' ',b'').decode()
 # print(mask)
 # print(netifaces.ifaddresses('wlp1s0')[netifaces.AF_INET][0]['netmask'])
-# print(netifaces.ifaddresses('wlp1s0')[netifaces.AF_INET][0]['addr'])
+# print(netifaces.ifaddresses('wlp1s0'))
 hostname = None
-try:
-    hostname = socket.gethostbyaddr('192.168.0.108')[0]
-    if hostname:
-        print(hostname)
-    else:
-        print('no')
-except socket.herror:
-    print('loi')
+# print(socket.gethostbyaddr('192.168.0.1')[0])
+# try:
+#     hostname =socket.gethostbyaddr('192.168.0.109')
+#     if hostname:
+#         print(hostname)
+#     else:
+#         print('no')
+# except socket.herror:
+#     print('loi')
+def getHost(ip):
+    try:
+        return socket.gethostbyaddr(ip)[0]
+    except socket.herror:
+        return None
+
+
+if(getHost('192.168.0.111')):
+    print(getHost('192.168.0.1'))

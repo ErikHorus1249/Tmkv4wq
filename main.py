@@ -18,6 +18,26 @@ def Arp(ip,interface):
         br = Ether(dst='ff:ff:ff:ff:ff:ff')
         request = br/arp_r # creat ARP request
         answered, unanswered = srp(Ether(dst="FF:FF:FF:FF:FF:FF")/ARP(pdst=ip),timeout=2,iface=interface,inter=0.1)
+        print(answered)
+        for i in answered:
+            ip, mac = i[1].psrc, i[1].hwsrc
+            host_name = getHost(ip)
+            if host_name:
+                print(ip + '\t\t' + mac + '\t\t' + host_name)
+                result.append({'IP':ip,'MAC':mac,'HOST':host_name})
+            else :
+                print(ip + '\t\t' + mac)
+                result.append({'IP':ip,'MAC':mac})
+        return result
+
+def Total(ip,interface):
+        result = []
+        print("IP range : "+ip + "\t" + "interface : "+interface)
+        arp_r = ARP(pdst=ip) # ARP requet 
+        br = Ether(dst='ff:ff:ff:ff:ff:ff')
+        request = br/arp_r # creat ARP request
+        answered, unanswered = srp(Ether(dst="FF:FF:FF:FF:FF:FF")/ARP(pdst=ip),timeout=2,iface=interface,inter=0.1)
+        print(answered)
         for i in answered:
             ip, mac = i[1].psrc, i[1].hwsrc
             print(ip + '\t\t' + mac)
@@ -57,8 +77,11 @@ def getIpRange():
     return str(ipaddress.ip_network(IP+'/'+NETMASK, strict=False))
     
 # get host name
-def getHostName(ip):
-    return socket.gethostbyaddr('192.168.0.106')[0]
+def getHost(ip):
+    try:
+        return socket.gethostbyaddr(ip)[0]
+    except socket.herror:
+        return None
 
 if __name__ == "__main__":
     start_time = time.time()
