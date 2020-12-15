@@ -8,6 +8,7 @@ import struct
 import re
 import netifaces
 import ipaddress
+import time 
 
 # IP + MAC
 def Arp(ip,interface):
@@ -34,7 +35,6 @@ def portScan(ip):
     except:
         print("Unexpected error:", sys.exc_info()[0])
         sys.exit(0)
-
     nm.scan(ip, '22-443')      # scan host, ports from 22 to 443 (limit)
     nm.all_hosts()                      # get all hosts that were scanned
     for host in nm.all_hosts():
@@ -60,5 +60,10 @@ def getIpRange():
 def getHostName(ip):
     return socket.gethostbyaddr('192.168.0.106')[0]
 
-print(Arp(getIpRange(), getDefaultInterface())) # call the method
+if __name__ == "__main__":
+    start_time = time.time()
+    ip_range = str(getIpRange())
+    print(Arp(ip_range, getDefaultInterface()))
+    print("\n--->  time execution %s s" % round(time.time() - start_time,2))
 
+    
