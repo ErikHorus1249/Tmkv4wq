@@ -12,7 +12,7 @@ do
     then
         continue
     else
-        echo 'ip :' "$ip" 'MAC' "$mac"
+        echo 'ip:' "$ip" 'MAC:' "$mac"
     fi
 done <"$file"
 rm ./result.txt
