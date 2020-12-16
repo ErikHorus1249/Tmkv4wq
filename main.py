@@ -18,7 +18,7 @@ def Arp(ip,interface):
         result = []
         print('[*] Start to scan')
         # time to wait for an answer
-        time_out = 3
+        time_out = 2
         print("IP range : "+ip + "\t" + "interface : "+interface)
         arp_r = ARP(pdst=ip) # ARP requet 
         br = Ether(dst='ff:ff:ff:ff:ff:ff')
@@ -28,17 +28,18 @@ def Arp(ip,interface):
             count += 1
             ip, mac = i[1].psrc, i[1].hwsrc
             host_name = getHost(ip)
+            # port scan ssh or telnet
             if host_name:
+                # result.append({'IP':ip,'MAC':mac,'HOST':host_name})
+                result.append({'IP':ip,'MAC':mac,'SSH/TELNET':str(portScan(ip))})
                 print(ip + '\t\t' + mac + '\t\t' + host_name)
-                result.append({'IP':ip,'MAC':mac,'HOST':host_name})
             else :
-                print(ip + '\t\t' + mac)
+                print(ip + '\t\t' + mac + '\t\t\t\t\t' )
                 result.append({'IP':ip,'MAC':mac})
         print("Devices : "+str(count))
         return result
 
-
-# PORT scanning   
+# PORT ssh or telnet protocol scanning   
 def portScan(ip): 
     # port result of scanning 
     result = []
