@@ -12,8 +12,11 @@ import time
 
 # IP + MAC
 def Arp(ip,interface):
+        # hide all verbose of scapy
+        conf.verb = 0 
         count = 0
         result = []
+        print('[*] Start to scan')
         # time to wait for an answer
         time_out = 3
         print("IP range : "+ip + "\t" + "interface : "+interface)
@@ -48,8 +51,8 @@ def portScan(ip):
     except:
         print("Unexpected error:", sys.exc_info()[0])
         sys.exit(0)
-    # scan host, ports from 22 to 443 (limit)
-    nm.scan(ip, '22-443')   
+    # scan host, ports from 22 to 23 (SSH/Telnet)
+    nm.scan(ip, '22-23')   
     # get all hosts that were scanned   
     nm.all_hosts()                      
     for host in nm.all_hosts():
