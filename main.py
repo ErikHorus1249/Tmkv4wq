@@ -116,8 +116,9 @@ def getHost(ip):
 
 if __name__ == "__main__":
     start_time = time.time()
-    # ip_range = str(getIpRange())
-    ip_range = '192.168.1.0/24'
+    ip_range = str(getIpRange())
+    # ip_range = '192.168.3.100'
+    print(Arp(ip_range, getDefaultInterface()))
     print(Arp(ip_range, getDefaultInterface()))
     # print(Arp1(getDefaultInterface()))
     print("\n--->  time execution %s s" % round(time.time() - start_time,2))
