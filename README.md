@@ -12,7 +12,7 @@
 
 #### step 1: Install module by pip3
 
-    $ pip3 install + nameOfModule
+    $ pip3 install -r ./requirements.txt
 
 #### step 2: Run
 
