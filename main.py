@@ -1,78 +1,57 @@
-from scapy.all import srp,Ether,ARP,conf
-import sys
-import nmap
-import netifaces
-import socket
-import fcntl
-import struct
-import re
+#! /usr/bin/env python3
+
+import argparse
+import logging
+import urllib.request
+import json
 import netifaces
 import ipaddress
-import time 
+import nmap
+from scapy.all import *
+try:
+    # For Python 3.0 and later
+    from urllib.request import urlopen
+except ImportError:
+    # Fall back to Python 2's urllib2
+    from urllib2 import urlopen
 
-# IP + MAC
-def Arp(ip,interface):
-        # hide all verbose of scapy
-        # conf.verb = 0 
-        count = 0
-        result = []
-        print('[*] Start to scan')
-        # time to wait for an answer
-        time_out = 2
-        print("IP range : "+ip + "\t" + "interface : "+interface)
-        arp_r = ARP(pdst=ip) # ARP requet 
-        br = Ether(dst='ff:ff:ff:ff:ff:ff')
-        request = br/arp_r # creat ARP request
-        answered, unanswered = srp(Ether(dst="FF:FF:FF:FF:FF:FF")/ARP(pdst=ip),timeout=time_out,iface=interface,inter=0.1)
-        for i in answered:
-            count += 1
-            ip, mac = i[1].psrc, i[1].hwsrc
-            host_name = getHost(ip)
-            # port scan ssh or telnet
-            if host_name:
-                # result.append({'IP':ip,'MAC':mac,'HOST':host_name})
-                # result.append({'IP':ip,'MAC':mac,'SSH/TELNET':str(portScan(ip))})
-                result.append({'IP':ip,'MAC':mac})
-                print(ip + '\t\t' + mac + '\t\t' + host_name)
-            else :
-                print(ip + '\t\t' + mac + '\t\t\t\t\t' )
-                result.append({'IP':ip,'MAC':mac})
-        print("Devices : "+str(count))
-        return result
 
-def Arp1(interface):
-        # hide all verbose of scapy
-        # conf.verb = 0 
-        count = 0
-        result = []
-        print('[*] Start to scan')
-        # time to wait for an answer
-        time_out = 2
-        for i in range(0,256):
-            ip = '192.168.1.'+str(i)
-            print("IP range : "+ip + "\t" + "interface : "+interface)
-            arp_r = ARP(pdst=ip) # ARP requet 
-            br = Ether(dst='ff:ff:ff:ff:ff:ff')
-            request = br/arp_r # creat ARP request
-            answered, unanswered = srp(Ether(dst="FF:FF:FF:FF:FF:FF")/ARP(pdst=ip),timeout=time_out,iface=interface,inter=0.1)
-            for i in answered:
-                count += 1
-                ip, mac = i[1].psrc, i[1].hwsrc
-                host_name = getHost(ip)
-                # port scan ssh or telnet
-                if host_name:
-                    # result.append({'IP':ip,'MAC':mac,'HOST':host_name})
-                    # result.append({'IP':ip,'MAC':mac,'SSH/TELNET':str(portScan(ip))})
-                    result.append({'IP':ip,'MAC':mac})
-                    print(ip + '\t\t' + mac + '\t\t' + host_name)
-                else :
-                    print(ip + '\t\t' + mac + '\t\t\t\t\t' )
-                    result.append({'IP':ip,'MAC':mac})
-        print("Devices : "+str(count))
-        return result
+def arpscan(target_ip):
+    try:
+        answereds, unanswereds = arping(target_ip, verbose=0)
+        return [[answered[1].sprintf("%ARP.psrc%"), answered[1].sprintf("%Ether.src%"), \
+                get_info(answered[1].sprintf("%Ether.src%")), \
+                port_Scan(answered[1].sprintf("%ARP.psrc%"))] \
+                for answered in answereds]
+    except Exception as e:
+        print ("Lỗi".format(e))
+        return []
+
+def get_info(mac):
+    # url = "http://www.macvendorlookup.com/api/v2/%s" % mac
+    url = "http://macvendors.co/api/%s" % mac
+    try:
+        data = json.load(urllib.request.urlopen(url))
+        # print(data['result']['company'])
+        return data['result']['company']
+    except Exception as e:
+        return "Failed to fetch vendor info. Error: {}".format(e)
+
+def print_summary(target, results):
+    print ("********* arp-scan report for %s *********" % target)
+    print ("IP\t\tMAC\t\t\tInfo\t\t\t\t\t\tSSH/Telnet")
+    print ('-'*100)
+    for result in results:
+        print ("%s\t%s\t%s\t\t\t%s" % (result[0], result[1], result[2],result[3]))
+
+def get_IpRange():
+    INTER = get_Default_Interface()
+    NETMASK = str(netifaces.ifaddresses(INTER)[netifaces.AF_INET][0]['netmask'])
+    IP = str(netifaces.ifaddresses(INTER)[netifaces.AF_INET][0]['addr'])
+    return str(ipaddress.ip_network(IP+'/'+NETMASK, strict=False))
 
 # PORT ssh or telnet protocol scanning   
-def portScan(ip): 
+def port_Scan(ip): 
     # port result of scanning 
     result = []
     # instantiate nmap.PortScanner object
@@ -96,31 +75,14 @@ def portScan(ip):
     return result
 
 # get network interface default
-def getDefaultInterface():
+def get_Default_Interface():
     gws=netifaces.gateways()
     return gws['default'][netifaces.AF_INET][1]
 
-# get ip range
-def getIpRange():
-    INTER = getDefaultInterface()
-    NETMASK = str(netifaces.ifaddresses(INTER)[netifaces.AF_INET][0]['netmask'])
-    IP = str(netifaces.ifaddresses(INTER)[netifaces.AF_INET][0]['addr'])
-    return str(ipaddress.ip_network(IP+'/'+NETMASK, strict=False))
-    
-# get host name
-def getHost(ip):
-    try:
-        return socket.gethostbyaddr(ip)[0]
-    except socket.herror:
-        return None
 
 if __name__ == "__main__":
     start_time = time.time()
-    ip_range = str(getIpRange())
-    # ip_range = '192.168.3.100'
-    print(Arp(ip_range, getDefaultInterface()))
-    print(Arp(ip_range, getDefaultInterface()))
-    # print(Arp1(getDefaultInterface()))
+    ip = get_IpRange()
+    print_summary(ip, arpscan(ip))
     print("\n--->  time execution %s s" % round(time.time() - start_time,2))
 
-# \b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b

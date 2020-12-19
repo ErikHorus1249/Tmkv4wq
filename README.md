@@ -1,19 +1,21 @@
-- **Python 3**
-- **net-tools** 
+ - **Python 3**
+ - **net-tools** 
+ - **argparse**
+ - **logging**
+ - **urllib.request**
+ - **json**
+ - **netifaces**
+ - **ipaddress**
+ - **nmap**
+ - **scapy**
+ - **urllib.request**
 
-#### step 1: Install arp 
+#### step 1: Install module by pip3
 
-    $ sudo apt-get update && sudo apt-get install net-tools
+    $ pip3 install + nameOfModule
 
-#### step 2: Change the access permissions for bash script
+#### step 2: Run
 
-    $ sudo chmod -x main.sh
+    $ python3 main.py
 
-#### step 3: Run
-
-    $ python3 python3 execute.py
-
-or
-
-    $ ./main.sh
 
