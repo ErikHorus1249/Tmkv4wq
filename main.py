@@ -15,7 +15,7 @@ except ImportError:
     # Fall back to Python 2's urllib2
     from urllib2 import urlopen
 
-
+# Scan 
 def arpscan(target_ip):
     try:
         answereds, unanswereds = arping(target_ip, verbose=0)
@@ -37,6 +37,7 @@ def get_info(mac):
     except Exception as e:
         return "Failed to fetch vendor info. Error: {}".format(e)
 
+# Display result
 def print_summary(target, results):
     print ("********* arp-scan report for %s *********" % target)
     print ("IP\t\tMAC\t\t\tInfo\t\t\t\t\t\tSSH/Telnet")
@@ -44,6 +45,7 @@ def print_summary(target, results):
     for result in results:
         print ("%s\t%s\t%s\t\t\t%s" % (result[0], result[1], result[2],result[3]))
 
+# Get ip range ex:192.168.0.0/24
 def get_IpRange():
     INTER = get_Default_Interface()
     NETMASK = str(netifaces.ifaddresses(INTER)[netifaces.AF_INET][0]['netmask'])
