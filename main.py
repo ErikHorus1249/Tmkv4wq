@@ -29,7 +29,6 @@ def scan_arp(target_ip):
 
 # MAC vendor lookup
 def get_info(mac):
-    # url = "http://www.macvendorlookup.com/api/v2/%s" % mac
     url = "http://macvendors.co/api/%s" % mac
     try:
         data = json.load(urllib.request.urlopen(url))
@@ -48,11 +47,6 @@ def display_summary(target, results):
     print ('-'*100)
     for result in results:
         print(f'{result[0]:14} {result[1]:20} {result[2]:60} {str(result[3]):10}')
-        # if result[2]!=None :
-        #     print(f'{result[0]:14} {result[1]:20} {result[2]:60} {str(result[3]):10}')
-        # else:
-        #     print(f'{result[0]:14} {result[1]:20} {'':60} {str(result[3]):10}')
-        # print ("%s\t%s\t%s\t\t\t%s" % (result[0], result[1], result[2],result[3]))
         
 # Get ip range ex:192.168.0.0/24
 def get_IpRange():
