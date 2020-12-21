@@ -36,17 +36,22 @@ def get_info(mac):
         # print(data['result']['company'])
         return data['result']['company']
     except Exception as e:
-        return 
+        return 'Unknown'
         # return "Failed to fetch vendor info. Error: {}".format(e)
 
 
 # Display result
 def display_summary(target, results):
-    print ("********* Ip range %s *********" % target)
+    print ("\t\tIp range %s\t\t" % target)
+    print ('-'*100)
     print ("IP\t\tMAC\t\t\tInfo\t\t\t\t\t\tSSH/Telnet")
     print ('-'*100)
     for result in results:
         print(f'{result[0]:14} {result[1]:20} {result[2]:60} {str(result[3]):10}')
+        # if result[2]!=None :
+        #     print(f'{result[0]:14} {result[1]:20} {result[2]:60} {str(result[3]):10}')
+        # else:
+        #     print(f'{result[0]:14} {result[1]:20} {'':60} {str(result[3]):10}')
         # print ("%s\t%s\t%s\t\t\t%s" % (result[0], result[1], result[2],result[3]))
         
 # Get ip range ex:192.168.0.0/24
