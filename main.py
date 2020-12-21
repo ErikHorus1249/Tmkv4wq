@@ -8,8 +8,6 @@ import netifaces
 import ipaddress
 import nmap
 from scapy.all import *
-
-# result = []
 try:
     # For Python 3.0 and later
     from urllib.request import urlopen
@@ -18,35 +16,35 @@ except ImportError:
     from urllib2 import urlopen
 
 # Arp scanning use arp ping(method) in module scapy  
-def scan_arp1():
-    for i in range(0,256):
-        target_ip = '192.168.1.'+str(i)
-        # print(target_ip)
-        try:
-            answereds, unanswereds = arping(target_ip, verbose=0)
-            res = answereds.summary(lambda s,r: r.sprintf("%Ether.src% %ARP.psrc%") )
-            if res != None:
-                print(res)
-            else :
-                continue
+# def scan_arp1():
+#     for i in range(0,256):
+#         target_ip = '192.168.1.'+str(i)
+#         # print(target_ip)
+#         try:
+#             answereds, unanswereds = arping(target_ip, verbose=0)
+#             res = answereds.summary(lambda s,r: r.sprintf("%Ether.src% %ARP.psrc%") )
+#             if res != None:
+#                 print(res)
+#             else :
+#                 continue
 
-            # print([[answered[1].sprintf("%ARP.psrc%"), answered[1].sprintf("%Ether.src%"), \
-            #         get_info(answered[1].sprintf("%Ether.src%"))] \
-            #         for answered in answereds])
-        except Exception as e:
-            print ("Error !".format(e))
-            # return []
+#             # print([[answered[1].sprintf("%ARP.psrc%"), answered[1].sprintf("%Ether.src%"), \
+#             #         get_info(answered[1].sprintf("%Ether.src%"))] \
+#             #         for answered in answereds])
+#         except Exception as e:
+#             print ("Error !".format(e))
+#             # return []
 
-def scan_arp(target_ip):
-    try:
-        answereds, unanswereds = arping(target_ip, verbose=0)
-        return [[answered[1].sprintf("%ARP.psrc%"), answered[1].sprintf("%Ether.src%"), \
-                get_info(answered[1].sprintf("%Ether.src%")), \
-                scan_port(answered[1].sprintf("%ARP.psrc%"))] \
-                for answered in answereds]
-    except Exception as e:
-        print ("Error !".format(e))
-        return []
+# def scan_arp(target_ip):
+#     try:
+#         answereds, unanswereds = arping(target_ip, verbose=0)
+#         return [[answered[1].sprintf("%ARP.psrc%"), answered[1].sprintf("%Ether.src%"), \
+#                 get_info(answered[1].sprintf("%Ether.src%")), \
+#                 scan_port(answered[1].sprintf("%ARP.psrc%"))] \
+#                 for answered in answereds]
+#     except Exception as e:
+#         print ("Error !".format(e))
+#         return []
 
 # MAC vendor lookup
 def get_info(mac):
