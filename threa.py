@@ -11,9 +11,15 @@ def scan_arp1(ip):
     target_ip = ip
     try:
         ans,unans = scapy.arping(target_ip,verbose=0)
-        res = ans.summary(lambda s,r: r.sprintf("%Ether.src% %ARP.psrc%") )
-        if res != None:
-            return res
+        for an in ans:
+            return [an[1].sprintf("%ARP.psrc%"), an[1].sprintf("%Ether.src%")] \
+            
+        # src = ans.summary(lambda s,r: r.sprintf("%Ether.src%") )
+        # psrc = ans.summary(lambda s,r: r.sprintf("%ARP.psrc%") )
+        # return [ans.summary(lambda s,r: r.sprintf("%Ether.src%") ),\
+        #         ans.summary(lambda s,r: r.sprintf("%ARP.psrc%") )]
+        # if psrc != None:
+            # return [src,psrc]
     except Exception as e:
         print ("Error !".format(e))
         return 
@@ -26,7 +32,9 @@ def run():
     count = 0
     num_procs = 256
     pool = Pool(processes=num_procs)
-    for res in pool.imap_unordered(scan_arp1, [str(ip) for ip in ipaddress.IPv4Network('192.168.1.0/24')]):
+    ip_range = get_IpRange()
+    print(ip_range)
+    for res in pool.imap_unordered(scan_arp1, [str(ip) for ip in ipaddress.IPv4Network(ip_range)]):
         if res != None:
             count += 1
             print(res)
