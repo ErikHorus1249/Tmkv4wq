@@ -36,7 +36,9 @@ def get_info(mac):
         # print(data['result']['company'])
         return data['result']['company']
     except Exception as e:
-        return "Failed to fetch vendor info. Error: {}".format(e)
+        return 
+        # return "Failed to fetch vendor info. Error: {}".format(e)
+
 
 # Display result
 def display_summary(target, results):
