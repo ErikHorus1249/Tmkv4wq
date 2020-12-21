@@ -3,19 +3,6 @@ import scapy.all as scapy
 from multiprocessing import Pool
 import time
 result = []
-def scan(arg):
-    target_ip, port = arg
-
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.settimeout(2)
-
-    try:
-        sock.connect((target_ip, port))
-        sock.close()
-
-        return port, True
-    except (socket.timeout, socket.error):
-        return port, False
 
 def scan_arp1(ip):
     target_ip = ip
