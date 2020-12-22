@@ -70,8 +70,9 @@ def get_ip(ip_range):
 def run():
     num_procs = 256 # the number of threads handled
     pool = Pool(processes=num_procs)
-    ip_range = get_IpRange() 
-    print(ip_range+normal_color)
+    ip_range = get_IpRange()
+    print('by @erikhorus') 
+    print(error_color+"IP range : "+ip_range+normal_color)
     print (header_color + '-'*120)
     print ("\tIP\t\tMAC\t\t\tINFO\t\t\t\t\t\t\tSSH\tTELNET")
     print ('-'*120 + normal_color)
