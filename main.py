@@ -8,7 +8,7 @@ import json
 from socket import *
 import socket
 import urllib.request
-# from scapy.all import *
+
 try:
     # For Python 3.0 and later
     from urllib.request import urlopen
@@ -63,6 +63,8 @@ def get_ip(ip_range):
         print(ip)
 
 def run():
+    host_color = '\033[32m'
+    normal_color = '\033[39m'
     num_procs = 256 # the number of threads handled
     pool = Pool(processes=num_procs)
     ip_range = get_IpRange() 
@@ -71,8 +73,11 @@ def run():
     print ("IP\t\tMAC\t\t\tInfo\t\t\t\t\t\t\tSSH\tTelnet")
     print ('-'*110)
     for res in pool.imap_unordered(scan_arp, [str(ip) for ip in ipaddress.IPv4Network(ip_range)]):
-        if res != None:
-            print(f'{res[0]:14} {res[1]:20} {res[2]:59} {str(res[3]):8} {str(res[4]):5}')
+        if res != None :
+            if res[3] == True or res[4] == True:
+                print(f'{host_color}{res[0]:14} {res[1]:20} {res[2]:59} {str(res[3]):8} {str(res[4]):5}')
+            else :
+                print(f'{normal_color}{res[0]:14} {res[1]:20} {res[2]:59} {str(res[3]):8} {str(res[4]):5}')
 
 # Get ip range ex:192.168.0.0/24
 def get_IpRange():
