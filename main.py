@@ -9,6 +9,11 @@ from socket import *
 import socket
 import urllib.request
 
+host_color = '\033[32m'
+normal_color = '\033[39m'
+header_color = '\033[33m'
+error_color = '\033[31m'
+
 try:
     # For Python 3.0 and later
     from urllib.request import urlopen
@@ -63,21 +68,21 @@ def get_ip(ip_range):
         print(ip)
 
 def run():
-    host_color = '\033[32m'
-    normal_color = '\033[39m'
     num_procs = 256 # the number of threads handled
     pool = Pool(processes=num_procs)
     ip_range = get_IpRange() 
-    print(ip_range)
-    print ('-'*110)
-    print ("IP\t\tMAC\t\t\tInfo\t\t\t\t\t\t\tSSH\tTelnet")
-    print ('-'*110)
+    print(ip_range+normal_color)
+    print (header_color + '-'*120)
+    print ("\tIP\t\tMAC\t\t\tINFO\t\t\t\t\t\t\tSSH\tTELNET")
+    print ('-'*120 + normal_color)
+    count = 1
     for res in pool.imap_unordered(scan_arp, [str(ip) for ip in ipaddress.IPv4Network(ip_range)]):
         if res != None :
             if res[3] == True or res[4] == True:
-                print(f'{host_color}{res[0]:14} {res[1]:20} {res[2]:59} {str(res[3]):8} {str(res[4]):5}')
+                print(f'{error_color}{count:3} | {host_color}{res[0]:14} {res[1]:20} {res[2]:62} {str(res[3]):8} {str(res[4]):5}')
             else :
-                print(f'{normal_color}{res[0]:14} {res[1]:20} {res[2]:59} {str(res[3]):8} {str(res[4]):5}')
+                print(f'{error_color}{count:3} | {normal_color}{res[0]:14} {res[1]:20} {res[2]:62} {str(res[3]):8} {str(res[4]):5}')
+            count += 1
 
 # Get ip range ex:192.168.0.0/24
 def get_IpRange():
@@ -95,4 +100,4 @@ def get_Default_Interface():
 if __name__ == '__main__':
     start_time = time.time()
     run()
-    print("\n--->  time execution %s s" % round(time.time() - start_time,2))
+    print(header_color + "\n--->  time execution %s s" % round(time.time() - start_time,2) +normal_color)
