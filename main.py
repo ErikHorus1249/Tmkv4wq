@@ -8,12 +8,6 @@ import json
 from socket import *
 import socket
 import urllib.request
-
-host_color = '\033[32m'
-normal_color = '\033[39m'
-header_color = '\033[33m'
-error_color = '\033[31m'
-
 try:
     # For Python 3.0 and later
     from urllib.request import urlopen
@@ -21,7 +15,13 @@ except ImportError:
     # Fall back to Python 2's urllib2
     from urllib2 import urlopen
 
-result = []
+# Highlight text color  
+host_color = '\033[32m'
+normal_color = '\033[39m'
+normalbg_color = '\033[49m'
+header_color = '\033[33m'
+error_color = '\033[31m'
+blue_color = '\033[103m'
 
 # Arp scanning use arp ping(method) in module scapy
 def scan_arp(ip):
@@ -73,7 +73,7 @@ def run():
     pool = Pool(processes=num_procs)
     ip_range = get_IpRange()
     print('by @erikhorus') 
-    print(f'{error_color} IP range : {ip_range:8} Interface: {get_Default_Interface():4} ')
+    print(f'{blue_color}{error_color}\t\t\t\t\t IP range : {ip_range:8} Interface: {get_Default_Interface():4}{normalbg_color}')
     print (header_color + '-'*120)
     print ("\tIP\t\tMAC\t\t\tINFO\t\t\t\t\t\t\tSSH\tTELNET")
     print ('-'*120 + normal_color)
