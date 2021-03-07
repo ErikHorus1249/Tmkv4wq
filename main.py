@@ -1,3 +1,6 @@
+
+from celery import shared_task
+
 import socket
 import scapy.all as scapy
 from multiprocessing import Pool
@@ -8,6 +11,7 @@ import json
 from socket import *
 import socket
 import urllib.request
+
 try:
     # For Python 3.0 and later
     from urllib.request import urlopen
@@ -23,7 +27,17 @@ header_color = '\033[33m'
 error_color = '\033[31m'
 blue_color = '\033[103m'
 
+# @shared_task
+# def publish_message(message):
+#     with app.producer_pool.acquire(block=True) as producer:
+#         producer.publish(
+#             message,
+#             exchange=config.RabbitMQ_Config['exchange'],
+#             routing_key=config.RabbitMQ_Config['routing_key'],
+#         )
+
 # Arp scanning use arp ping(method) in module scapy
+@shared_task
 def scan_arp(ip):
     target_ip = ip
     ssh_port,telnet_port = 22, 23 
@@ -41,6 +55,7 @@ def scan_arp(ip):
         return 
 
 # MAC vendor lookup
+@shared_task
 def get_info(mac):
     url = "http://macvendors.co/api/%s" % mac
     try:
@@ -50,6 +65,7 @@ def get_info(mac):
         return 'Unknown'
 
 # Ssh or telnet protocol port scanning 
+@shared_task
 def scan_port(ip, port):
    host = gethostbyname(ip)
    if get_connection(host,port) == 0 or get_connection(host,port) == 0:
@@ -57,6 +73,7 @@ def scan_port(ip, port):
    return False
 
 # Enable port checking 
+@shared_task
 def get_connection(host,port):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
       s.settimeout(1)
@@ -64,10 +81,12 @@ def get_connection(host,port):
       return conn
 
 # Get ip range ex:192.168.0.0/24
+@shared_task
 def get_ip(ip_range):
     for ip in ipaddress.IPv4Network(ip_range):
         print(ip)
 
+@shared_task
 def run():
     num_procs = 256 # the number of threads handled
     pool = Pool(processes=num_procs)
@@ -89,6 +108,7 @@ def run():
     
 
 # Get ip range ex:192.168.0.0/24
+@shared_task
 def get_IpRange():
     INTER = get_Default_Interface()
     NETMASK = str(netifaces.ifaddresses(INTER)[netifaces.AF_INET][0]['netmask'])
@@ -96,12 +116,22 @@ def get_IpRange():
     return str(ipaddress.ip_network(IP+'/'+NETMASK, strict=False))
 
 # get network interface default
+@shared_task
 def get_Default_Interface():
     gws=netifaces.gateways()
     return gws['default'][netifaces.AF_INET][1]
 
-# Main
-if __name__ == '__main__':
+# # Main
+# if __name__ == '__main__':
+#     start_time = time.time()
+#     run()
+#     print(header_color + "\n--->  time execution %s s" % round(time.time() - start_time,2) +normal_color)
+
+@shared_task
+def main():
     start_time = time.time()
     run()
     print(header_color + "\n--->  time execution %s s" % round(time.time() - start_time,2) +normal_color)
+
+# test
+# main()
