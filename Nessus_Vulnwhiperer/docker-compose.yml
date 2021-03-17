@@ -5,8 +5,8 @@ services:
     image: tenableofficial/nessus:8.13.1
     environment: 
       ACTIVATION_CODE=9L75-2U3T-USCE-WCZV-FH7H
-      USERNAME=erikhorus
-      PASSWORD=1421999Tuananh
+      USERNAME=ais
+      PASSWORD=ais
     ports: 8834:8834
 
 services:
