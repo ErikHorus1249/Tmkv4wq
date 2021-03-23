@@ -35,7 +35,6 @@ blue_color = '\033[103m'
 #             exchange=config.RabbitMQ_Config['exchange'],
 #             routing_key=config.RabbitMQ_Config['routing_key'],
 #         )
-
 # Arp scanning use arp ping(method) in module scapy
 #@shared_task
 def scan_arp(ip):
