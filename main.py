@@ -93,7 +93,6 @@ def run():
     
 
 # Get ip range ex:192.168.0.0/24
-
 def get_IpRange():
     INTER = get_Default_Interface()
     NETMASK = str(netifaces.ifaddresses(INTER)[netifaces.AF_INET][0]['netmask'])
@@ -101,17 +100,9 @@ def get_IpRange():
     return str(ipaddress.ip_network(IP+'/'+NETMASK, strict=False))
 
 # get network interface default
-
 def get_Default_Interface():
     gws=netifaces.gateways()
     return gws['default'][netifaces.AF_INET][1]
-
-# # Main
-# if __name__ == '__main__':
-#     start_time = time.time()
-#     run()
-#     print(header_color + "\n--->  time execution %s s" % round(time.time() - start_time,2) +normal_color)
-
 
 def main():
     start_time = time.time()
